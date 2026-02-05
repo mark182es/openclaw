@@ -11,13 +11,15 @@ WORKDIR /app
 # --- INSTALACIÓN DE BINARIOS ADICIONALES ---
 RUN apt-get update && apt-get install -y --no-install-recommends \
     socat curl tar ca-certificates && \
-    # Instalar wacli (v0.1.18 - ajustado a la URL real)
-    curl -fsSL https://github.com/steipete/wacli/releases/download/v0.1.18/wacli_Linux_x86_64.tar.gz -o wacli.tar.gz && \
+    # Instalar wacli (Buscando el asset dinámicamente)
+    curl -fsSL https://github.com/steipete/wacli/releases/latest/download/wacli_Linux_x86_64.tar.gz -o wacli.tar.gz || \
+    curl -fsSL $(curl -s https://api.github.com/repos/steipete/wacli/releases/latest | grep "browser_download_url.*Linux_x86_64.tar.gz" | cut -d '"' -f 4) -o wacli.tar.gz && \
     tar -xzf wacli.tar.gz -C /usr/local/bin && \
     chmod +x /usr/local/bin/wacli && \
     rm wacli.tar.gz && \
-    # Instalar gog (v0.1.1 - ajustado a la URL real)
-    curl -fsSL https://github.com/steipete/gog/releases/download/v0.1.1/gog_Linux_x86_64.tar.gz -o gog.tar.gz && \
+    # Instalar gog (Buscando el asset dinámicamente)
+    curl -fsSL https://github.com/steipete/gog/releases/latest/download/gog_Linux_x86_64.tar.gz -o gog.tar.gz || \
+    curl -fsSL $(curl -s https://api.github.com/repos/steipete/gog/releases/latest | grep "browser_download_url.*Linux_x86_64.tar.gz" | cut -d '"' -f 4) -o gog.tar.gz && \
     tar -xzf gog.tar.gz -C /usr/local/bin && \
     chmod +x /usr/local/bin/gog && \
     rm gog.tar.gz && \
