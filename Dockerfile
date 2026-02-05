@@ -8,17 +8,22 @@ RUN corepack enable
 
 WORKDIR /app
 
-# --- INSTALACIÓN DE BINARIOS ADICIONALES (WhatsApp, etc) ---
+# --- INSTALACIÓN DE BINARIOS ADICIONALES ---
 RUN apt-get update && apt-get install -y --no-install-recommends \
     socat curl tar ca-certificates && \
-    # WhatsApp CLI
-    curl -L https://github.com/steipete/wacli/releases/latest/download/wacli_Linux_x86_64.tar.gz \
-    | tar -xz -C /usr/local/bin && chmod +x /usr/local/bin/wacli && \
-    # Gmail CLI
-    curl -L https://github.com/steipete/gog/releases/latest/download/gog_Linux_x86_64.tar.gz \
-    | tar -xz -C /usr/local/bin && chmod +x /usr/local/bin/gog && \
+    # Instalar wacli
+    curl -fsSL https://github.com/steipete/wacli/releases/latest/download/wacli_Linux_x86_64.tar.gz -o wacli.tar.gz && \
+    tar -xzf wacli.tar.gz -C /usr/local/bin && \
+    chmod +x /usr/local/bin/wacli && \
+    rm wacli.tar.gz && \
+    # Instalar gog
+    curl -fsSL https://github.com/steipete/gog/releases/latest/download/gog_Linux_x86_64.tar.gz -o gog.tar.gz && \
+    tar -xzf gog.tar.gz -C /usr/local/bin && \
+    chmod +x /usr/local/bin/gog && \
+    rm gog.tar.gz && \
+    # Limpieza
     apt-get clean && rm -rf /var/lib/apt/lists/*
-# -----------------------------------------------------------
+# -------------------------------------------
 
 ARG OPENCLAW_DOCKER_APT_PACKAGES=""
 RUN if [ -n "$OPENCLAW_DOCKER_APT_PACKAGES" ]; then \
