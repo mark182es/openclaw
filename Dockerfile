@@ -37,6 +37,12 @@ RUN pnpm ui:build
 
 ENV NODE_ENV=production
 
+# --- NUEVO: Crear acceso directo 'openclaw' ---
+USER root
+RUN echo '#!/bin/bash\nnode /app/openclaw.mjs "$@"' > /usr/local/bin/openclaw && \
+    chmod +x /usr/local/bin/openclaw
+# ----------------------------------------------
+
 RUN chown -R node:node /app
 USER node
 
