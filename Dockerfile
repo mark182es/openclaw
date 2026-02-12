@@ -31,6 +31,7 @@ RUN pnpm install --frozen-lockfile
 
 COPY . .
 RUN OPENCLAW_A2UI_SKIP_MISSING=1 pnpm build
+# Force pnpm for UI build (Bun may fail on ARM/Synology architectures)
 ENV OPENCLAW_PREFER_PNPM=1
 RUN pnpm ui:build
 
@@ -39,6 +40,10 @@ ENV NODE_ENV=production
 RUN chown -R node:node /app
 USER node
 
-# IMPORTANTE: Cambiamos el CMD para que escuche en todas las interfaces (0.0.0.0) 
-# de lo contrario Traefik no podrá conectar con el contenedor.
-CMD ["node", "dist/index.js", "gateway", "--allow-unconfigured", "--bind", "lan"]
+# Start gateway server with default config.
+# Binds to loopback (127.0.0.1) by default for security.
+#
+# For container platforms requiring external health checks:
+#   1. Set OPENCLAW_GATEWAY_TOKEN or OPENCLAW_GATEWAY_PASSWORD env var
+#   2. Override CMD: ["node","openclaw.mjs","gateway","--allow-unconfigured","--bind","lan"]
+CMD ["node", "openclaw.mjs", "gateway", "--allow-unconfigured", "--bind", "lan"]
